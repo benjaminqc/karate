@@ -25,6 +25,7 @@ package com.intuit.karate;
 
 import com.intuit.karate.exception.KarateException;
 import com.intuit.karate.netty.FeatureServer;
+import com.intuit.karate.netty.FileChangedWatcher;
 import com.intuit.karate.netty.NettyUtils;
 import com.intuit.karate.ui.App;
 import java.io.File;
@@ -203,8 +204,12 @@ public class Main implements Callable<Void> {
         } else {
             server = FeatureServer.start(mock, port, false, null);
         }
+
+        // hot reload
+        FileChangedWatcher watcher = new FileChangedWatcher(mock, server, port, ssl, cert, key);
+        watcher.watch();
+
         server.waitSync();
         return null;
     }
-
 }
